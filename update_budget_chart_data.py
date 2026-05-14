@@ -18,7 +18,6 @@ HEADERS = {
     "Content-Type": "application/json"
 }
 
-# 14 budget tracker sheets — one per department
 BUDGET_SHEETS = {
     "CS Tech Sales":     5791435776282500,
     "Events Brand Pgms": 3117457857269636,
@@ -36,10 +35,8 @@ BUDGET_SHEETS = {
     "Shared Services":   742701719834500,
 }
 
-# Budget Chart Data sheet
 CHART_SHEET_ID = 4612295454838660
 
-# Row IDs in the Budget Chart Data sheet — one per department
 CHART_ROW_MAP = {
     "CS Tech Sales":     5371525748686724,
     "Events Brand Pgms": 3119725935001476,
@@ -57,17 +54,11 @@ CHART_ROW_MAP = {
     "Shared Services":   3541938400067460,
 }
 
-# Column IDs in the Budget Chart Data sheet
 EST_COL_ID    = 7465145986224004
 ACTUAL_COL_ID = 1835646452010884
 
 
 def get_department_totals(dept_name, sheet_id):
-    """
-    Reads all rows from a budget tracker sheet and sums
-    Estimated Cost (USD) and Actual Spend (USD).
-    Uses objectValue include to correctly read formula cell values.
-    """
     url = f"{BASE_URL}/sheets/{sheet_id}?include=objectValue"
     response = requests.get(url, headers=HEADERS)
 
@@ -79,7 +70,6 @@ def get_department_totals(dept_name, sheet_id):
     columns    = sheet_data.get("columns", [])
     rows       = sheet_data.get("rows", [])
 
-    # Find column IDs for the two financial columns
     est_col = next(
         (c["id"] for c in columns if c["title"] == "Estimated Cost (USD)"), None
     )
@@ -112,11 +102,6 @@ def get_department_totals(dept_name, sheet_id):
 
 
 def update_chart_data_sheet(dept_totals):
-    """
-    Writes department totals into the Budget Chart Data sheet.
-    One row per department, two columns: Estimated Cost (USD)
-    and Actual Spend (USD).
-    """
     rows_to_update = []
 
     for dept_name, (est_total, actual_total) in dept_totals.items():
