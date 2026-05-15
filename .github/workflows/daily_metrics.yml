@@ -23,7 +23,7 @@ jobs:
         env:
           SMARTSHEET_API_TOKEN: ${{ secrets.SMARTSHEET_API_TOKEN }}
         run: python update_budget_chart_data.py
-        - name: Run Task Name Setter
+      - name: Run Task Name Setter
         env:
           SMARTSHEET_API_TOKEN: ${{ secrets.SMARTSHEET_API_TOKEN }}
         run: python task_name_setter.py
