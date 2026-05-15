@@ -17,6 +17,13 @@ HEADERS = {
     "Content-Type": "application/json"
 }
 
+def safe_int(val):
+    """Safely convert a value to int — returns 0 for blanks, errors, or #UNPARSEABLE."""
+    try:
+        return int(val)
+    except (ValueError, TypeError):
+        return 0
+
 SHEETS = {
     "Growth Marketing":     8218401167069060,
     "Events Brand Pgms":    6675193647812484,
@@ -108,7 +115,7 @@ def update_completion_by_sheet(sheet_id, metric_col_id, value_col_id, row_map):
         if not row_id:
             continue
         values = get_summary_fields(sheet_name, asset_sheet_id)
-        done_count = int(values.get("Done", 0))
+        done_count = safe_int(values.get("Done", 0))
         rows_to_update.append({
             "id": row_id,
             "cells": [{"columnId": value_col_id, "value": done_count}]
@@ -176,12 +183,12 @@ def main():
         values = get_summary_fields(sheet_name, sheet_id)
         if values:
             for metric in METRIC_NAMES:
-                totals[metric] += int(values.get(metric, 0))
-            print(f"  ✅ {sheet_name}: Total={int(values.get('Total',0))}, "
-                  f"Done={int(values.get('Done',0))}, "
-                  f"Tier1={int(values.get('Tier 1',0))}, "
-                  f"Tier2={int(values.get('Tier 2',0))}, "
-                  f"Tier3={int(values.get('Tier 3',0))}")
+                totals[metric] += safe_int(values.get(metric, 0))
+            print(f"  ✅ {sheet_name}: Total={safe_int(values.get('Total',0))}, "
+                  f"Done={safe_int(values.get('Done',0))}, "
+                  f"Tier1={safe_int(values.get('Tier 1',0))}, "
+                  f"Tier2={safe_int(values.get('Tier 2',0))}, "
+                  f"Tier3={safe_int(values.get('Tier 3',0))}")
 
     print("\n📝 Updating metrics sheet...")
     sheet_info = get_metrics_sheet()
